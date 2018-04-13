@@ -1,5 +1,6 @@
 package com.ubspy.optic.main;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,10 @@ import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -21,13 +26,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
-    static ArrayList<Display> displays;
+    private static ArrayList<Display> displays;
+    private static DisplayAdapter adapter;
+    private RecyclerView recyclerView;
+
+    static Activity mainActivity;
 
     BroadcastReceiver messageReceiver;
     File displaysFile;
@@ -40,7 +47,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //TODO: Test for displays file, if so load it's contents into displays array
+        //Defines static activity for resetting
+        mainActivity = this;
 
         //Floating add button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -61,16 +69,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        //Sets up message receiver
-        messageReceiver = new BroadcastReceiver()
-        {
-            @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                notifyBluetooth();
-            }
-        };
-
         //Opens displays file
         displaysFile = new File(MainActivity.this.getFilesDir(), "displays");
 
@@ -90,11 +88,10 @@ public class MainActivity extends AppCompatActivity
                 objectStream.close();
                 inputStream.close();
 
-                for(Display currentDisplay : displays)
+                for(int i = 1; i <= displays.size(); i++)
                 {
-                    Log.v("FILE", (currentDisplay.getTitle() + " " + currentDisplay.getContents()));
+                    Log.v("FILE", displays.get(i).getTitle() + ", " + displays.get(i).getContents());
                 }
-
             }
             catch(Exception e) {  }
         }
@@ -113,6 +110,30 @@ public class MainActivity extends AppCompatActivity
             catch(IOException e) {  }
         }
 
+        //Defines the view holder
+        adapter = new DisplayAdapter(this, displays);
+
+        //Defines recycler view
+        recyclerView = findViewById(R.id.recycler_view);
+
+        //Sets layout manager, animator, and adapter
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 1);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+
+        //Updates the view
+        adapter.notifyDataSetChanged();
+
+        //Sets up message receiver
+        messageReceiver = new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                notifyBluetooth();
+            }
+        };
     }
 
     @Override
@@ -159,8 +180,18 @@ public class MainActivity extends AppCompatActivity
     //You need a context, because openFileOutput can't be referenced statically, and it's really really stupid
     public static void addDisplay(Display display, Context context)
     {
+        //Adds display to array list
         displays.add(display);
 
+        //Writes file
+        writeFile(context);
+
+        //Updates recycler view
+        adapter.notifyDataSetChanged();
+    }
+
+    private static void writeFile(Context context)
+    {
         try
         {
             //Overwrites the whole file since we already have the whole persistent data stored in the arraylist

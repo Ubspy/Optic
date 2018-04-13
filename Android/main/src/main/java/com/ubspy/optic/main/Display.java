@@ -9,8 +9,8 @@ public class Display implements Serializable
 
     public Display(String title, String contents)
     {
-        slideTitle = title;
-        slideContents = contents;
+        this.slideTitle = title;
+        this.slideContents = contents;
     }
 
     public String getTitle()
@@ -21,5 +21,15 @@ public class Display implements Serializable
     public String getContents()
     {
         return this.slideContents;
+    }
+
+    public void setTitle(String title)
+    {
+        this.slideTitle = title;
+    }
+
+    public void setContents(String contents)
+    {
+        this.slideContents = contents;
     }
 }
