@@ -10,15 +10,20 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+//This class manages the views for each element (view holder)
 public class DisplayAdapter extends RecyclerView.Adapter<DisplayAdapter.MyViewHolder>
 {
+    //Private version of base context and the displayList array list
     private Context context;
     private ArrayList<Display> displayList;
 
+    //Custom view holder class
     public class MyViewHolder extends RecyclerView.ViewHolder
     {
+        //Holds text views
         public TextView titleView, contentsView;
 
+        //Constructor, creates a new view holder, and sets the text views to their templates
         public MyViewHolder(View view)
         {
             super(view);
@@ -27,12 +32,14 @@ public class DisplayAdapter extends RecyclerView.Adapter<DisplayAdapter.MyViewHo
         }
     }
 
+    //Constructor, sets context and display list
     public DisplayAdapter(Context context, ArrayList<Display> displayList)
     {
         this.context = context;
         this.displayList = displayList;
     }
 
+    //Runs on creation, basically contructor
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
@@ -44,6 +51,7 @@ public class DisplayAdapter extends RecyclerView.Adapter<DisplayAdapter.MyViewHo
         return new MyViewHolder(itemView);
     }
 
+    //For each view holder
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position)
     {
@@ -55,6 +63,7 @@ public class DisplayAdapter extends RecyclerView.Adapter<DisplayAdapter.MyViewHo
         holder.contentsView.setText(display.getContents());
     }
 
+    //Gets size of view holders to make
     @Override
     public int getItemCount()
     {
