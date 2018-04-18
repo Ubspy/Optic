@@ -1,10 +1,10 @@
 <resources>
-
     <string name="action_settings">Settings</string>
     <string name="slideTitle">Title:</string>
     <string name="slideContents">Contents:</string>
     <string name="slideContentsHint">Slide Contents</string>
     <string name="doneButton">Done</string>
     <string name="cancelButton">Cancel</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
 </resources>

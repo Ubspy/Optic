@@ -6,12 +6,12 @@
     android:layout_height="wrap_content">
 
     <item
-        android:id="@+id/action_add_favourite"
+        android:id="@+id/action_edit"
         android:orderInCategory="100"
-        android:title="Add Favorite"/>
+        android:title="@string/action_edit"/>
 
     <item
-        android:id="@+id/action_play_next"
+        android:id="@+id/action_delete"
         android:orderInCategory="101"
-        android:title="Play Next"/>
+        android:title="@string/action_delete"/>
 </menu>

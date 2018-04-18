@@ -87,11 +87,6 @@ public class MainActivity extends AppCompatActivity
                 //Closes streams
                 objectStream.close();
                 inputStream.close();
-
-                for(int i = 1; i <= displays.size(); i++)
-                {
-                    Log.v("FILE", displays.get(i).getTitle() + ", " + displays.get(i).getContents());
-                }
             }
             catch(Exception e) {  }
         }
@@ -101,8 +96,6 @@ public class MainActivity extends AppCompatActivity
             {
                 //Creates the file
                 displaysFile.createNewFile();
-
-                Log.v("FILE", "OOPS NO FILE");
 
                 //Sets the arraylist to an empty arraylist
                 displays = new ArrayList<>();
@@ -190,6 +183,29 @@ public class MainActivity extends AppCompatActivity
         adapter.notifyDataSetChanged();
     }
 
+    public static void editDisplay(Display display, int index, Context context)
+    {
+        //Sets the new display
+        displays.set(index, display);
+
+        //Writes to the file
+        writeFile(context);
+
+        //Updates recycler view
+        adapter.notifyDataSetChanged();
+    }
+
+    public static void deleteDisplay(Display display, Context context)
+    {
+        //Removes display from array list
+        displays.remove(display);
+
+        writeFile(context);
+
+        //Updates recycler view
+        adapter.notifyDataSetChanged();
+    }
+
     private static void writeFile(Context context)
     {
         try
@@ -200,12 +216,6 @@ public class MainActivity extends AppCompatActivity
 
             //Writes the object
             objectStream.writeObject(displays);
-
-            //LOG TODO: REMOVE
-            for(Display currentDisplay : displays)
-            {
-                Log.v("FILE WRITE", (currentDisplay.getTitle() + " " + currentDisplay.getContents()));
-            }
 
             //Closes the streams
             objectStream.close();
